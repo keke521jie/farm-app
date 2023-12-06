@@ -1,0 +1,105 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# https://quip.com/bLKmArIGX60a/App-build-management
+
+require 'uri'
+require 'open-uri'
+require 'json'
+
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "Build"
+  lane :build do |options|
+    export_method = options[:export_method]
+    profile_name = options[:profile_name]
+    appid = options[:appid]
+    build_ios_app(
+      workspace: "ios/Runner.xcworkspace",
+      silent: true,
+      xcargs: "-UseModernBuildSystem=YES",
+      export_xcargs: "-UseModernBuildSystem=YES",
+      scheme: "Runner",
+      export_method: export_method,
+      include_bitcode: false,
+      output_directory: "./build/fastlane",
+      output_name: "App.ipa",
+      disable_xcpretty: true,
+      configuration: "Release",
+      export_options: {
+        compileBitcode: false,
+        method: export_method,
+        stripSwiftSymbols: true,
+        provisioningProfiles: {
+          appid => "match " + profile_name + " " + appid,
+        }
+      }
+    )
+  end
+
+  desc "upload to appcenter"
+  lane :upload_appcenter do |options|
+    app_name = options[:app_name]
+    appcenter_upload(
+      api_token: ENV["APPCENTER_API_TOKEN"],
+      owner_name: "brain.im",
+      app_name: app_name,
+      file: "./build/fastlane/App.ipa",
+      destinations: "beta",
+      destination_type: "group",
+      release_notes: ""
+    )
+  end
+
+  desc "upload to appcenter for android"
+  lane :upload_appcenter_android do |options|
+    app_name = options[:app_name]
+    appcenter_upload(
+      api_token: ENV["APPCENTER_API_TOKEN"],
+      owner_name: "brain.im",
+      app_name: app_name,
+      file: "./build/app/outputs/flutter-apk/app-release.apk",
+      destinations: "beta",
+      destination_type: "group",
+      release_notes: ""
+    )
+  end
+
+  desc "upload to testflight"
+  lane :upload_testflight do |options|
+    app_identifier = options[:app_identifier]
+    upload_to_testflight(
+      localized_build_info: {
+        "default": {
+          whats_new: "Default changelog",
+        }
+      },
+      username: "zhrren@qq.com",
+      app_identifier: app_identifier,
+      team_name: "Brain Technologies, Inc.",
+      ipa: "./build/fastlane/App.ipa",
+      skip_waiting_for_build_processing: true,
+      skip_submission: false,
+      groups: "Internal",
+      notify_external_testers: false
+    )
+  end
+
+end

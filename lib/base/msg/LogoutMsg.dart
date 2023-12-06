@@ -1,0 +1,3 @@
+class LogoutMsg {
+  LogoutMsg();
+}
