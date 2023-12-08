@@ -1,7 +1,6 @@
 import "package:app/base/api/ApiClient.dart";
 import "package:app/base/cutil/LoggerFactory.dart";
 import "package:app/uikit/getIt.dart";
-import "package:app/uikit/util/AfterLayoutMixin.dart";
 import "package:flutter/material.dart";
 
 class ApiClientDemoPage extends StatefulWidget {
@@ -11,7 +10,7 @@ class ApiClientDemoPage extends StatefulWidget {
   _ApiClientDemoState createState() => _ApiClientDemoState();
 }
 
-class _ApiClientDemoState extends State<ApiClientDemoPage> with AfterLayoutMixin {
+class _ApiClientDemoState extends State<ApiClientDemoPage> {
   final _logger = LoggerFactory.getLogger();
 
   @override
