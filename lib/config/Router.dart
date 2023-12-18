@@ -12,7 +12,7 @@ import "package:go_router/go_router.dart";
 import "package:lifecycle/lifecycle.dart";
 
 GoRouter configureRouterOrGet() {
-  if(!GetIt.instance.isRegistered<GoRouter>()) {
+  if (!GetIt.instance.isRegistered<GoRouter>()) {
     var router = configureRouter();
     GetIt.instance.registerSingleton(router);
     return router;
