@@ -32,10 +32,7 @@ class Startup {
     WidgetsFlutterBinding.ensureInitialized();
 
     FlutterError.onError = (FlutterErrorDetails details) {
-      Zone.current.handleUncaughtError(
-        details.exception,
-        details.stack ?? StackTrace.fromString("Unknown"),
-      );
+      handleError(details);
     };
 
     Directory directory = await getApplicationDocumentsDirectory();
@@ -66,8 +63,20 @@ class Startup {
       await Local.onDidCreated();
     }
   }
+}
 
-  static Future<void> _handleUnauthorizedMsg(msg) async {
+extension HandleError on Startup {
+  handleError(FlutterErrorDetails details) {
+    if (kReleaseMode) {
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      FlutterError.dumpErrorToConsole(details);
+    }
+  }
+}
+
+extension HandleMsg on Startup {
+  Future<void> _handleUnauthorizedMsg(msg) async {
     logger.i("StartedHomeMsg");
   }
 }

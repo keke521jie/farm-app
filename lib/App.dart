@@ -10,7 +10,7 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       title: "App",
       debugShowCheckedModeBanner: false,
-      routerConfig: configureRouter(),
+      routerConfig: configureRouterOrGet(),
       theme: ThemeData(
           // highlightColor: Colors.transparent,
           // splashColor: Colors.transparent,
