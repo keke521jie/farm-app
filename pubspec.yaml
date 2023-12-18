@@ -65,6 +65,7 @@ dependencies:
   # project
   url_launcher: ^6.1.14
   webview_flutter: ^4.4.2
+  archive: ^3.4.9
 
 
 dev_dependencies:
