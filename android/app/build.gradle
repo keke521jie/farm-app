@@ -62,6 +62,11 @@ android {
     versionCode flutterVersionCode.toInteger()
     versionName flutterVersionName
     multiDexEnabled true
+    manifestPlaceholders = [
+      //从 3.1.2.0 版本开始，APPID 占位符从 GETUI_APP_ID 切换为 GETUI_APPID
+      //后续所有产品的 APPID 均统一配置为 GETUI_APPID 占位符
+      GETUI_APPID       : "MBNiWcrEZo75YMXejwg4J2",
+    ]
   }    ///minSdkVersion 19
 
   packagingOptions {
@@ -101,4 +106,6 @@ flutter {
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
   implementation 'com.android.support:multidex:1.0.3'
+  implementation 'com.getui:gtsdk:3.2.18.0'  //个推SDK
+  implementation 'com.getui:gtc:3.2.6.0'  //个推核心组件
 }

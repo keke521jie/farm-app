@@ -368,6 +368,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "7.6.4"
+  getuiflut:
+    dependency: "direct main"
+    description:
+      name: getuiflut
+      sha256: "6bf5ac61fd92ef908455a23bc84e50946dd7316846706493b6638988b9d36d9e"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.25"
   glob:
     dependency: transitive
     description:
@@ -1094,5 +1102,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
+  dart: ">=3.2.0-194.0.dev <=3.2.3"
   flutter: ">=3.13.0"

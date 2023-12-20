@@ -1,4 +1,5 @@
 import "package:app/base/kernel/Logger.dart";
+import "package:app/gen/assets.gen.dart";
 import "package:app/uikit/clip/ClipView.dart";
 import "package:app/uikit/getIt.dart";
 import "package:flutter/material.dart";
