@@ -12,7 +12,10 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    var homeBloc = getIt<HomePageBloc>(param1: context);
+    var homeBloc = useMemoized(() {
+      return getIt<HomePageBloc>(param1: context);
+    }, []);
+
     useEffect(() {
       homeBloc.initPlatformState(); // 初始化sdk监听后续操作
       homeBloc.initGetuiSdk(); // 初始化sdk
