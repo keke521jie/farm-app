@@ -12,11 +12,22 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    var homeBloc = useMemoized(() {
+      return getIt<HomePageBloc>(param1: context);
+    }, []);
+
+    useEffect(() {
+      homeBloc.initPlatformState(); // 初始化sdk监听后续操作
+      homeBloc.initGetuiSdk(); // 初始化sdk
+      homeBloc.getClientId(); //调用获取cid
+      return null;
+    }, []);
     logger.i("HomePage.build");
     return BlocProvider(
-      create: (_) => getIt<HomePageBloc>(param1: context),
+      create: (_) => homeBloc,
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         var homeBloc = context.read<HomePageBloc>();
+
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: [ClipView(uri: Uri.parse("https://farm.hswl007.com/clip/"))]),
