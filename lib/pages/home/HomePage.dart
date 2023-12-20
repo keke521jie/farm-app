@@ -1,5 +1,4 @@
 import "package:app/base/kernel/Logger.dart";
-import "package:app/gen/assets.gen.dart";
 import "package:app/uikit/clip/ClipView.dart";
 import "package:app/uikit/getIt.dart";
 import "package:flutter/material.dart";
@@ -13,11 +12,19 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      var homeBloc = getIt<HomePageBloc>(param1: context);
+      homeBloc.initPlatformState(); // 初始化sdk监听后续操作
+      homeBloc.initGetuiSdk(); // 初始化sdk
+      homeBloc.getClientId(); //调用获取cid
+      return null;
+    }, []);
     logger.i("HomePage.build");
     return BlocProvider(
       create: (_) => getIt<HomePageBloc>(param1: context),
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
         var homeBloc = context.read<HomePageBloc>();
+
         return Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(children: [ClipView(uri: Uri.parse("https://farm.hswl007.com/clip/"))]),

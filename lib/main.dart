@@ -1,5 +1,4 @@
 import "dart:async";
-
 import "package:app/Startup.dart";
 import "package:app/uikit/getIt.dart";
 import "package:flutter/material.dart";
