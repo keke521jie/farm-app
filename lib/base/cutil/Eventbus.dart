@@ -1,36 +1,25 @@
 import "dart:async";
 
-/*
-class UnauthorizedMsg {
-  UnauthorizedMsg(int statusCode);
-}
+import "Disposable.dart";
 
-_handleUnauthorizedMsg(msg) {
-  logger.i("StartedHomeMsg");
-}
-
-eventbus.on<UnauthorizedMsg>().listen(_handleUnauthorizedMsg);
-
-eventbus.emit(UnauthorizedMsg(statusCode));
-
- */
-class Eventbus {
+class Eventbus extends Disposable {
   final StreamController _streamController;
 
   Eventbus({bool sync = false}) : _streamController = StreamController.broadcast(sync: sync);
 
-  Stream<T> on<T>() {
+  StreamSubscription<T> on<T>(void Function(T value) callback) {
     if (T == dynamic) {
-      return _streamController.stream as Stream<T>;
+      return (_streamController.stream as Stream<T>).listen(callback);
     } else {
-      return _streamController.stream.where((event) => event is T).cast<T>();
+      return _streamController.stream.where((event) => event is T).cast<T>().listen(callback);
     }
   }
 
-  void emit(event) {
-    _streamController.add(event);
+  void emit<T>(T value) {
+    _streamController.add(value);
   }
 
+  @override
   void dispose() {
     _streamController.close();
   }
