@@ -16,11 +16,11 @@ class MsgHandler extends ClipMsgHandler {
     var name = msg.getOrElse("name", () => "") as String;
     var payload = msg.getOrElse("payload", () => {}) as Map<String, dynamic>;
     switch (name) {
-      case "setAuthentication":
+      case "setIdentity":
         var token = payload.getOrElse("token", () => "") as String;
         authStore.login(token);
 
-        logger.i("setAuthentication, token: $token");
+        logger.i("setIdentity, token: $token");
         reply({});
         break;
     }
