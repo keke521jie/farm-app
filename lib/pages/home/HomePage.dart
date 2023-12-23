@@ -1,5 +1,7 @@
 import "package:app/base/kernel/Logger.dart";
+import "package:app/config/MsgHandler.dart";
 import "package:app/uikit/clip/ClipView.dart";
+import "package:app/uikit/clip/ClipMsgHandler.dart";
 import "package:app/uikit/getIt.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -23,6 +25,10 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
       return null;
     }, []);
     logger.i("HomePage.build");
+
+    var msgHandler = getIt<MsgHandler>();
+    var clipMsgHandler = useMemoized(() => ClipMsgHandler());
+
     return BlocProvider(
       create: (_) => homeBloc,
       child: BlocBuilder<HomePageBloc, HomePageState>(builder: (context, state) {
@@ -30,7 +36,12 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Stack(children: [ClipView(uri: Uri.parse("https://farm.hswl007.com/clip/"))]),
+          body: Stack(children: [
+            ClipView(
+              uri: Uri.parse("https://farm.hswl007.com/clip/"),
+              msgHandlers: [msgHandler, clipMsgHandler],
+            )
+          ]),
         );
       }),
     );

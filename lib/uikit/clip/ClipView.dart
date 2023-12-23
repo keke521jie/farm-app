@@ -1,13 +1,19 @@
+import "dart:convert";
+
+import "package:dartx/dartx.dart";
 import "package:flutter/material.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
 import "package:webview_flutter/webview_flutter.dart";
 import "package:webview_flutter_android/webview_flutter_android.dart";
 import "package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart";
 
+import "ClipMsgHandler.dart";
+
 class ClipView extends HookWidget {
   Uri uri;
+  List<ClipMsgHandler> msgHandlers;
 
-  ClipView({super.key, required this.uri});
+  ClipView({super.key, required this.uri, required this.msgHandlers});
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +64,27 @@ Page resource error:
         ),
       );
       controller.addJavaScriptChannel(
-        "Toaster",
+        "Clipbus",
         onMessageReceived: (JavaScriptMessage message) {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text(message.message)),
-          // );
+          debugPrint("Clipbus received message: ${message.message}");
+
+          Map<String, dynamic> msg = jsonDecode(message.message);
+          var t = msg.getOrElse("@type", () => "") as String;
+          var id = msg.getOrElse("id", () => "") as String;
+          var name = msg.getOrElse("name", () => "") as String;
+
+          if (t.isNotNullOrBlank && id.isNotNullOrBlank && name.isNotNullOrBlank) {
+            for (var handler in msgHandlers) {
+              handler.handle(context, msg, (payload) {
+                Map<String, dynamic> message = {"@type": t, "id": "replay:$id", "name": name, "payload": payload};
+                var jsonData = jsonEncode(message);
+                var javaScript = "postMessage('$jsonData')";
+
+                debugPrint("Clipbus tell message: $javaScript");
+                controller.runJavaScript(javaScript);
+              });
+            }
+          }
         },
       );
 

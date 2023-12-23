@@ -57,7 +57,7 @@ class Startup {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     }
 
-    eventbus.on<UnauthorizedMsg>().listen(_handleUnauthorizedMsg);
+    eventbus.on<UnauthorizedMsg>(_handleUnauthorizedMsg);
 
     if (kDebugMode) {
       await Local.onDidCreated();
