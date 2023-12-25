@@ -1,6 +1,7 @@
 import "dart:convert";
 
 import "package:dartx/dartx.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
 import "package:webview_flutter/webview_flutter.dart";
@@ -10,22 +11,32 @@ import "package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart";
 import "ClipMsgHandler.dart";
 
 class ClipView extends HookWidget {
-  final Uri _uri;
-  final List<ClipMsgHandler> _msgHandlers;
-  final ClipViewController _clipViewController;
-  late final WebViewController _webViewController;
-  late final GlobalKey<NavigatorState> _navigatorKey;
+  final Uri uri;
+  final List<ClipMsgHandler> msgHandlers;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  ClipView({
-    super.key,
-    required Uri uri,
-    required List<ClipMsgHandler> msgHandlers,
-    required ClipViewController controller,
-    required GlobalKey<NavigatorState> navigatorKey,
-  })  : _uri = uri,
-        _msgHandlers = msgHandlers,
-        _clipViewController = controller,
-        _navigatorKey = navigatorKey {
+  const ClipView({super.key, required this.uri, required this.msgHandlers, required this.navigatorKey});
+
+  @override
+  Widget build(BuildContext context) {
+    var view = useMemoized(() => _ClipView(uri: uri, msgHandlers: msgHandlers, navigatorKey: navigatorKey));
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        debugPrint("onPopInvoked, didPop: $didPop");
+      },
+      child: view,
+    );
+  }
+}
+
+class _ClipView extends HookWidget {
+  final Uri uri;
+  final List<ClipMsgHandler> msgHandlers;
+  late final WebViewController webViewController;
+  late final GlobalKey<NavigatorState> navigatorKey;
+
+  _ClipView({required this.uri, required this.msgHandlers, required this.navigatorKey}) {
     PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
@@ -35,10 +46,10 @@ class ClipView extends HookWidget {
     } else {
       params = const PlatformWebViewControllerCreationParams();
     }
-    _webViewController = WebViewController.fromPlatformCreationParams(params);
-    _webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    _webViewController.setBackgroundColor(const Color(0xffffffff));
-    _webViewController.setNavigationDelegate(
+    webViewController = WebViewController.fromPlatformCreationParams(params);
+    webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
+    webViewController.setBackgroundColor(const Color(0xffffffff));
+    webViewController.setNavigationDelegate(
       NavigationDelegate(
         onProgress: (int progress) {
           debugPrint("WebView is loading (progress : $progress%)");
@@ -67,18 +78,16 @@ Page resource error:
         },
       ),
     );
-    if (_webViewController.platform is AndroidWebViewController) {
+    if (webViewController.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
-      (_webViewController.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
+      (webViewController.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
     }
-
-    _clipViewController._setup(_webViewController);
   }
 
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      _webViewController.addJavaScriptChannel(
+      webViewController.addJavaScriptChannel(
         "Clipbus",
         onMessageReceived: (JavaScriptMessage message) {
           debugPrint("Clipbus received message: ${message.message}");
@@ -89,35 +98,27 @@ Page resource error:
           var name = msg.getOrElse("name", () => "") as String;
 
           if (type == "MessagebusMsg" && id.isNotNullOrBlank && name.isNotNullOrBlank) {
-            for (var handler in _msgHandlers) {
-              handler.handle(_navigatorKey.currentContext, msg, (payload) {
+            for (var handler in msgHandlers) {
+              handler.handle(navigatorKey.currentContext, msg, (payload) {
                 Map<String, dynamic> message = {"@type": type, "id": "replay:$id", "name": name, "payload": payload};
                 var jsonData = jsonEncode(message);
                 var javaScript = "postMessage('$jsonData')";
 
                 debugPrint("Clipbus tell message: $javaScript");
-                _webViewController.runJavaScript(javaScript);
+                webViewController.runJavaScript(javaScript);
               });
             }
           }
         },
       );
 
-      _webViewController.loadRequest(_uri);
+      webViewController.loadRequest(uri);
       return null;
     });
 
     return Container(
       color: Colors.white,
-      child: WebViewWidget(controller: _webViewController),
+      child: WebViewWidget(controller: webViewController),
     );
-  }
-}
-
-class ClipViewController {
-  late WebViewController _controller;
-
-  _setup(WebViewController controller) {
-    _controller = controller;
   }
 }
