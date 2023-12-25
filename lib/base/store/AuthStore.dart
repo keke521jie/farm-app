@@ -4,8 +4,6 @@ import "package:injectable/injectable.dart";
 class AuthState {
   String token = "7d4adce86aab3c2a281d7b15e6a82012d86bcbf6";
 
-  // String token = "";
-
   AuthState copyWith({String? token}) {
     return AuthState()..token = token ?? this.token;
   }

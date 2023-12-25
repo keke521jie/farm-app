@@ -6,7 +6,7 @@ import "package:dartx/dartx.dart";
 import "package:flutter/material.dart";
 import "package:injectable/injectable.dart";
 
-@Injectable()
+@Singleton()
 class MsgHandler extends ClipMsgHandler {
   AuthStore authStore;
   IdentityStore identityStore;
@@ -14,7 +14,7 @@ class MsgHandler extends ClipMsgHandler {
   MsgHandler(this.authStore, this.identityStore);
 
   @override
-  void handle(BuildContext context, Map<String, dynamic> msg, void Function(Map<String, dynamic> payload) reply) {
+  void handle(BuildContext? context, Map<String, dynamic> msg, void Function(Map<String, dynamic> payload) reply) {
     var name = msg.getOrElse("name", () => "") as String;
     var payload = msg.getOrElse("payload", () => {}) as Map<String, dynamic>;
     switch (name) {

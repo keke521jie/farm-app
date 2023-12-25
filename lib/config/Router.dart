@@ -6,6 +6,7 @@ import "package:app/pages/example/lifecycle/LifecyclePage2.dart";
 import "package:app/pages/home/HomePage.dart";
 import "package:app/pages/login/LoginPage.dart";
 import "package:app/uikit/getIt.dart";
+import "package:app/uikit/navigatorKey.dart";
 import "package:flutter/material.dart";
 import "package:get_it/get_it.dart";
 import "package:go_router/go_router.dart";
@@ -25,6 +26,7 @@ GoRouter configureRouter() {
   return GoRouter(
     observers: [defaultLifecycleObserver],
     initialLocation: properties.initialLocation,
+    navigatorKey: navigatorKey,
     redirect: (BuildContext context, GoRouterState state) {
       return null;
     },

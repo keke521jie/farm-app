@@ -10,100 +10,114 @@ import "package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart";
 import "ClipMsgHandler.dart";
 
 class ClipView extends HookWidget {
-  Uri uri;
-  List<ClipMsgHandler> msgHandlers;
+  final Uri _uri;
+  final List<ClipMsgHandler> _msgHandlers;
+  final ClipViewController _clipViewController;
+  late final WebViewController _webViewController;
+  late final GlobalKey<NavigatorState> _navigatorKey;
 
-  ClipView({super.key, required this.uri, required this.msgHandlers});
-
-  @override
-  Widget build(BuildContext context) {
-    WebViewController controller = useMemoized(() {
-      late final PlatformWebViewControllerCreationParams params;
-      if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-        params = WebKitWebViewControllerCreationParams(
-          allowsInlineMediaPlayback: true,
-          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-        );
-      } else {
-        params = const PlatformWebViewControllerCreationParams();
-      }
-      var controller = WebViewController.fromPlatformCreationParams(params);
-      controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      controller.setBackgroundColor(const Color(0x00000000));
-      controller.setNavigationDelegate(
-        NavigationDelegate(
-          onProgress: (int progress) {
-            debugPrint("WebView is loading (progress : $progress%)");
-          },
-          onPageStarted: (String url) {
-            debugPrint("Page started loading: $url");
-          },
-          onPageFinished: (String url) {
-            debugPrint("Page finished loading: $url");
-          },
-          onWebResourceError: (WebResourceError error) {
-            debugPrint("""
+  ClipView({
+    super.key,
+    required Uri uri,
+    required List<ClipMsgHandler> msgHandlers,
+    required ClipViewController controller,
+    required GlobalKey<NavigatorState> navigatorKey,
+  })  : _uri = uri,
+        _msgHandlers = msgHandlers,
+        _clipViewController = controller,
+        _navigatorKey = navigatorKey {
+    PlatformWebViewControllerCreationParams params;
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+    _webViewController = WebViewController.fromPlatformCreationParams(params);
+    _webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
+    _webViewController.setBackgroundColor(const Color(0xffffffff));
+    _webViewController.setNavigationDelegate(
+      NavigationDelegate(
+        onProgress: (int progress) {
+          debugPrint("WebView is loading (progress : $progress%)");
+        },
+        onPageStarted: (String url) {
+          debugPrint("Page started loading: $url");
+        },
+        onPageFinished: (String url) {
+          debugPrint("Page finished loading: $url");
+        },
+        onWebResourceError: (WebResourceError error) {
+          debugPrint("""
 Page resource error:
   code: ${error.errorCode}
   description: ${error.description}
   errorType: ${error.errorType}
   isForMainFrame: ${error.isForMainFrame}
           """);
-          },
-          onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith("https://www.youtube.com/")) {
-              debugPrint("blocking navigation to ${request.url}");
-              return NavigationDecision.prevent;
-            }
-            debugPrint("allowing navigation to ${request.url}");
-            return NavigationDecision.navigate;
-          },
-          onUrlChange: (UrlChange change) {
-            debugPrint("url change to ${change.url}");
-          },
-        ),
-      );
-      controller.addJavaScriptChannel(
+        },
+        onNavigationRequest: (NavigationRequest request) {
+          debugPrint("allowing navigation to ${request.url}");
+          return NavigationDecision.navigate;
+        },
+        onUrlChange: (UrlChange change) {
+          debugPrint("url change to ${change.url}");
+        },
+      ),
+    );
+    if (_webViewController.platform is AndroidWebViewController) {
+      AndroidWebViewController.enableDebugging(true);
+      (_webViewController.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
+    }
+
+    _clipViewController._setup(_webViewController);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    useEffect(() {
+      _webViewController.addJavaScriptChannel(
         "Clipbus",
         onMessageReceived: (JavaScriptMessage message) {
           debugPrint("Clipbus received message: ${message.message}");
 
           Map<String, dynamic> msg = jsonDecode(message.message);
-          var t = msg.getOrElse("@type", () => "") as String;
+          var type = msg.getOrElse("@type", () => "") as String;
           var id = msg.getOrElse("id", () => "") as String;
           var name = msg.getOrElse("name", () => "") as String;
 
-          if (t.isNotNullOrBlank && id.isNotNullOrBlank && name.isNotNullOrBlank) {
-            for (var handler in msgHandlers) {
-              handler.handle(context, msg, (payload) {
-                Map<String, dynamic> message = {"@type": t, "id": "replay:$id", "name": name, "payload": payload};
+          if (type == "MessagebusMsg" && id.isNotNullOrBlank && name.isNotNullOrBlank) {
+            for (var handler in _msgHandlers) {
+              handler.handle(_navigatorKey.currentContext, msg, (payload) {
+                Map<String, dynamic> message = {"@type": type, "id": "replay:$id", "name": name, "payload": payload};
                 var jsonData = jsonEncode(message);
                 var javaScript = "postMessage('$jsonData')";
 
                 debugPrint("Clipbus tell message: $javaScript");
-                controller.runJavaScript(javaScript);
+                _webViewController.runJavaScript(javaScript);
               });
             }
           }
         },
       );
 
-      if (controller.platform is AndroidWebViewController) {
-        AndroidWebViewController.enableDebugging(true);
-        (controller.platform as AndroidWebViewController).setMediaPlaybackRequiresUserGesture(false);
-      }
-
-      return controller;
-    });
-
-    useEffect(() {
-      controller.loadRequest(uri);
+      _webViewController.loadRequest(_uri);
       return null;
     });
 
     return Container(
       color: Colors.white,
-      child: WebViewWidget(controller: controller),
+      child: WebViewWidget(controller: _webViewController),
     );
+  }
+}
+
+class ClipViewController {
+  late WebViewController _controller;
+
+  _setup(WebViewController controller) {
+    _controller = controller;
   }
 }
