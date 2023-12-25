@@ -7,8 +7,6 @@ import "package:webview_flutter/webview_flutter.dart";
 import "package:webview_flutter_android/webview_flutter_android.dart";
 import "package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart";
 
-import "../../base/store/IdentityStore.dart";
-import "../getIt.dart";
 import "ClipMsgHandler.dart";
 
 class ClipView extends HookWidget {
@@ -17,7 +15,6 @@ class ClipView extends HookWidget {
   final ClipViewController _clipViewController;
   late final WebViewController _webViewController;
   late final GlobalKey<NavigatorState> _navigatorKey;
-  var identityStore = getIt<IdentityStore>();
 
   ClipView({
     super.key,
