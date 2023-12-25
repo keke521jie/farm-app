@@ -1,4 +1,5 @@
 import "package:app/base/kernel/Logger.dart";
+import "package:app/base/port/GetuiClient.dart";
 import "package:app/base/store/AuthStore.dart";
 import "package:app/base/store/IdentityStore.dart";
 import "package:app/uikit/clip/ClipMsgHandler.dart";
@@ -10,8 +11,9 @@ import "package:injectable/injectable.dart";
 class MsgHandler extends ClipMsgHandler {
   AuthStore authStore;
   IdentityStore identityStore;
+  GetuiClient _getuiClient;
 
-  MsgHandler(this.authStore, this.identityStore);
+  MsgHandler(this.authStore, this.identityStore, this._getuiClient);
 
   @override
   void handle(BuildContext? context, Map<String, dynamic> msg, void Function(Map<String, dynamic> payload) reply) {
@@ -23,6 +25,7 @@ class MsgHandler extends ClipMsgHandler {
         var token = payload.getOrElse("token", () => "") as String;
         authStore.login(token);
         identityStore.save(id: id);
+        _getuiClient.configure();
 
         logger.i("setIdentity, token: $token");
         reply({});

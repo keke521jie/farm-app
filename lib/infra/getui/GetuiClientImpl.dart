@@ -2,26 +2,20 @@ import "dart:io";
 
 import "package:app/base/kernel/Logger.dart";
 import "package:app/base/kernel/Settings.dart";
+import "package:app/base/port/GetuiClient.dart";
+import "package:app/base/store/AuthStore.dart";
+import "package:app/base/store/IdentityStore.dart";
+import "package:dartx/dartx.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:getuiflut/getuiflut.dart";
 import "package:injectable/injectable.dart";
 
-class GetuiState {
-  String clientId = "";
-  String deviceToken = "";
+@Singleton(as: GetuiClient)
+class GetuiClientImpl extends GetuiClient {
+  AuthStore _authStore;
+  IdentityStore _identityStore;
 
-  GetuiState copyWith({String? clientId, String? deviceToken}) {
-    return GetuiState()
-      ..clientId = clientId ?? this.clientId
-      ..deviceToken = deviceToken ?? this.deviceToken;
-  }
-}
-
-@Singleton()
-class GetuiClient extends BlocBase<GetuiState> {
-  GetuiClient() : super(GetuiState());
-
-  void configure() {
+  GetuiClientImpl(this._authStore, this._identityStore) : super() {
     if (Platform.isIOS) {
       Getuiflut().startSdk(
         appId: settings.getuiAppId,
@@ -36,6 +30,7 @@ class GetuiClient extends BlocBase<GetuiState> {
       print("getui onReceiveClientId: $message");
       Getuiflut().bindAlias("alias", "alias"); //这里设置别名
       emit(state.copyWith(clientId: "ClientId: $message"));
+      configure();
     }, onReceiveMessageData: (Map<String, dynamic> msg) async {
       print("getui onReceiveMessageData: $msg");
     }, onNotificationMessageArrived: (Map<String, dynamic> msg) async {
@@ -72,6 +67,14 @@ class GetuiClient extends BlocBase<GetuiState> {
     });
   }
 
+  @override
+  void configure() {
+    if(_authStore.isAuth && _identityStore.id.isNotBlank && state.clientId.isNotBlank) {
+      // 绑定别名
+    }
+  }
+
+  @override
   Future<String> getClientId() async {
     String getClientId = "";
     try {
@@ -82,4 +85,6 @@ class GetuiClient extends BlocBase<GetuiState> {
     }
     return getClientId;
   }
+
+
 }

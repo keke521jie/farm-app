@@ -1,3 +1,4 @@
+import "package:dartx/dartx.dart";
 import "package:hydrated_bloc/hydrated_bloc.dart";
 import "package:injectable/injectable.dart";
 
@@ -32,7 +33,7 @@ class AuthStore extends BlocBase<AuthState> with HydratedMixin {
     return {"token": state.token};
   }
 
-  bool get isLoggedIn {
-    return state.token.isNotEmpty;
+  bool get isAuth {
+    return state.token.isNotBlank;
   }
 }

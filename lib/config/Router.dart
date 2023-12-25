@@ -42,7 +42,7 @@ List<GoRoute> _pages() {
           var authStore = getIt<AuthStore>();
           return CustomTransitionPage(
             key: state.pageKey,
-            child: authStore.isLoggedIn ? HomePage() : LoginPage(),
+            child: authStore.isAuth ? HomePage() : LoginPage(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(
                 opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
