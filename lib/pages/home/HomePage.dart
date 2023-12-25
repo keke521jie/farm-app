@@ -38,7 +38,7 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
           resizeToAvoidBottomInset: false,
           body: Stack(children: [
             ClipView(
-              uri: Uri.parse("https://farm.hswl007.com/clip/"),
+              uri: Uri.parse("http://192.168.3.44:10086/#/pages/index/IndexPage"),
               msgHandlers: [msgHandler, clipMsgHandler],
               controller: clipViewController,
               navigatorKey: navigatorKey,
