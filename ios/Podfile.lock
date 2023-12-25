@@ -1,5 +1,10 @@
 PODS:
   - Flutter (1.0.0)
+  - getuiflut (0.0.1):
+    - Flutter
+    - GTSDK
+  - GTSDK (2.7.4.0):
+    - ZXSDK
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -14,9 +19,11 @@ PODS:
     - Flutter
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
+  - ZXSDK (3.2.4)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - getuiflut (from `.symlinks/plugins/getuiflut/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -24,9 +31,16 @@ DEPENDENCIES:
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
+SPEC REPOS:
+  trunk:
+    - GTSDK
+    - ZXSDK
+
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  getuiflut:
+    :path: ".symlinks/plugins/getuiflut/ios"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
@@ -42,12 +56,15 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  getuiflut: 8628ba2b64a738a847a07d2b67e0ac305778e2ee
+  GTSDK: f28e6d575e8a1c26e331ce29b0ecac7db39679cc
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
   webview_flutter_wkwebview: 2e2d318f21a5e036e2c3f26171342e95908bd60a
+  ZXSDK: 145a89f90f11e18e4fe62fe43175a60ade342ba8
 
 PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 

@@ -1,10 +1,9 @@
+import "package:dartx/dartx.dart";
 import "package:hydrated_bloc/hydrated_bloc.dart";
 import "package:injectable/injectable.dart";
 
 class AuthState {
   String token = "7d4adce86aab3c2a281d7b15e6a82012d86bcbf6";
-
-  // String token = "";
 
   AuthState copyWith({String? token}) {
     return AuthState()..token = token ?? this.token;
@@ -34,7 +33,7 @@ class AuthStore extends BlocBase<AuthState> with HydratedMixin {
     return {"token": state.token};
   }
 
-  bool get isLoggedIn {
-    return state.token.isNotEmpty;
+  bool get isAuth {
+    return state.token.isNotBlank;
   }
 }

@@ -5,7 +5,9 @@ import "package:app/base/cutil/LoggerFactory.dart";
 import "package:app/base/kernel/EventBus.dart";
 import "package:app/base/kernel/Logger.dart";
 import "package:app/base/msg/UnauthorizedMsg.dart";
+import "package:app/base/port/GetuiClient.dart";
 import "package:app/base/store/AuthStore.dart";
+import "package:app/infra/getui/GetuiClientImpl.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -18,8 +20,9 @@ import "Local.dart";
 @Singleton()
 class Startup {
   late final AuthStore _authStore;
+  late final GetuiClient _getuiClient;
 
-  Startup(this._authStore);
+  Startup(this._authStore, this._getuiClient);
 
   Future<void> onCreated() async {
     if (kDebugMode) {
@@ -58,6 +61,8 @@ class Startup {
     }
 
     eventbus.on<UnauthorizedMsg>(_handleUnauthorizedMsg);
+
+    _getuiClient.configure();
 
     if (kDebugMode) {
       await Local.onDidCreated();

@@ -22,35 +22,11 @@ class RestClientAdapter {
       "App-Version": appInfo.version,
     });
 
-    //var amplitudeDeviceId = analytics.getAmplitudeDeviceId()
     headers["Content-Type"] = "application/json;charset=UTF-8";
-    //headers['X-Brain-User-Tz'] = TimeZone.current.identifier;
-
-    // if(executionId.value.nonEmpty) {
-    // headers['X-Brain-Exec-Id'] = executionId.value;
-    // }
-
-    // if let value = store.state.app.localtion {
-    // headers['X-Brain-User-Location'] = '\(value.latitude),\(value.longitude)'
-    // }
 
     if (authStore.state.token.isNotEmpty) {
       headers["Authorization"] = "token ${authStore.state.token}";
     }
-
-    // apollo
-
-    // if store.state.app.nlpSessionId.nonEmpty {
-    // headers['X-Brain-Nlp-Session-Id'] = store.state.app.nlpSessionId
-    // }
-    //
-    // if store.state.app.interaction.nonEmpty {
-    // headers['X-Brain-Interaction'] = store.state.app.interaction
-    // }
-    //
-    // if !amplitudeDeviceId.isEmpty {
-    // headers['X-Brain-Amplitude-Device-Id'] = amplitudeDeviceId
-    // }
 
     return headers;
   }

@@ -3,6 +3,7 @@ import "package:app/config/MsgHandler.dart";
 import "package:app/uikit/clip/ClipView.dart";
 import "package:app/uikit/clip/ClipMsgHandler.dart";
 import "package:app/uikit/getIt.dart";
+import "package:app/uikit/navigatorKey.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
@@ -14,20 +15,19 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    logger.i("HomePage.build");
+
+    var msgHandler = getIt<MsgHandler>();
+    var clipMsgHandler = useMemoized(() => ClipMsgHandler());
+    var clipViewController = useMemoized(() => ClipViewController());
+
     var homeBloc = useMemoized(() {
       return getIt<HomePageBloc>(param1: context);
     }, []);
 
     useEffect(() {
-      homeBloc.initPlatformState(); // 初始化sdk监听后续操作
-      homeBloc.initGetuiSdk(); // 初始化sdk
-      homeBloc.getClientId(); //调用获取cid
       return null;
     }, []);
-    logger.i("HomePage.build");
-
-    var msgHandler = getIt<MsgHandler>();
-    var clipMsgHandler = useMemoized(() => ClipMsgHandler());
 
     return BlocProvider(
       create: (_) => homeBloc,
@@ -40,6 +40,8 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
             ClipView(
               uri: Uri.parse("https://farm.hswl007.com/clip/"),
               msgHandlers: [msgHandler, clipMsgHandler],
+              controller: clipViewController,
+              navigatorKey: navigatorKey,
             )
           ]),
         );
