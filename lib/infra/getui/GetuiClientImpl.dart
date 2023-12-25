@@ -33,7 +33,7 @@ class GetuiClientImpl extends GetuiClient {
 
       Getuiflut().addEventHandler(onReceiveClientId: (String message) async {
         print("getui onReceiveClientId: $message");
-        Getuiflut().bindAlias("alias", "alias"); //这里设置别名
+        // Getuiflut().bindAlias("alias", "alias"); //这里设置别名
         emit(state.copyWith(clientId: "ClientId: $message"));
         configure();
       }, onReceiveMessageData: (Map<String, dynamic> msg) async {
@@ -73,9 +73,10 @@ class GetuiClientImpl extends GetuiClient {
     }
 
     logger.i(
-        "authStore.isAuth: ${_authStore.isAuth}, identityStore.id: ${_identityStore.id}, clientId:${state.clientId}");
-    if (_authStore.isAuth && _identityStore.id.isNotBlank && state.clientId.isNotBlank) {
+        "authStore.isAuth: ${_authStore.isAuth}, identityStore.id: ${_identityStore.state.id}, clientId:${state.clientId}");
+    if (_authStore.isAuth && _identityStore.state.id.isNotBlank && state.clientId.isNotBlank) {
       // 绑定别名
+      Getuiflut().bindAlias(_identityStore.state.id, _identityStore.state.id); //这里设置别名
     }
   }
 

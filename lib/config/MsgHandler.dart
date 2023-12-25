@@ -27,7 +27,7 @@ class MsgHandler extends ClipMsgHandler {
         identityStore.save(id: id);
         _getuiClient.configure();
 
-        logger.i("setIdentity, token: $token");
+        logger.i("setIdentity, token: $token id:${identityStore.state.id}  $id");
         reply({});
         break;
     }
