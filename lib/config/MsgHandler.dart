@@ -11,7 +11,7 @@ import "package:injectable/injectable.dart";
 class MsgHandler extends ClipMsgHandler {
   AuthStore authStore;
   IdentityStore identityStore;
-  GetuiClient _getuiClient;
+  final GetuiClient _getuiClient;
 
   MsgHandler(this.authStore, this.identityStore, this._getuiClient);
 

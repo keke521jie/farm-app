@@ -7,7 +7,6 @@ import "package:app/base/kernel/Logger.dart";
 import "package:app/base/msg/UnauthorizedMsg.dart";
 import "package:app/base/port/GetuiClient.dart";
 import "package:app/base/store/AuthStore.dart";
-import "package:app/infra/getui/GetuiClientImpl.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
