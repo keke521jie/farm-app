@@ -17,33 +17,39 @@ class ClipView extends HookWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   late WebViewController webViewController;
 
-  ClipView({super.key, required this.uri, required this.msgHandlers, required this.navigatorKey}) {
-    PlatformWebViewControllerCreationParams params;
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
-    }
-    webViewController = WebViewController.fromPlatformCreationParams(params);
-  }
+  ClipView({super.key, required this.uri, required this.msgHandlers, required this.navigatorKey}) {}
 
   @override
   Widget build(BuildContext context) {
-    var view = useMemoized(() => _ClipView(
-          uri: uri,
-          msgHandlers: msgHandlers,
-          navigatorKey: navigatorKey,
-          controller: webViewController,
-        ));
+    webViewController = useMemoized(() {
+      PlatformWebViewControllerCreationParams params;
+      if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+        params = WebKitWebViewControllerCreationParams(
+          allowsInlineMediaPlayback: true,
+          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        );
+      } else {
+        params = const PlatformWebViewControllerCreationParams();
+      }
+      return WebViewController.fromPlatformCreationParams(params);
+    });
+
+    var view = useMemoized(() {
+      return _ClipView(
+        uri: uri,
+        msgHandlers: msgHandlers,
+        navigatorKey: navigatorKey,
+        controller: webViewController,
+      );
+    });
+
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
-        debugPrint("onPopInvoked, didPop: $didPop");
-        var msg = MessagebusMsg(const Uuid().v4(), "", {});
-        webViewController.runJavaScript(msg.toScript());
+      onPopInvoked: (didPop) async {
+        var msg = MessagebusMsg(const Uuid().v4(), "pop", {});
+        debugPrint("onPopInvoked, didPop: $didPop, script: ${msg.toScript()}");
+        await webViewController.runJavaScript(msg.toScript());
+        debugPrint("onPopInvoked, didPop: $didPop, complete");
       },
       child: view,
     );
@@ -147,10 +153,10 @@ class MessagebusMsg {
   }
 
   String toScript() {
-    return "postMessage('${jsonEncode(toMap())}')";
+    return "window.postMessage('${jsonEncode(toMap())}')";
   }
 }
 
 class MessagebusReplayMsg extends MessagebusMsg {
-  MessagebusReplayMsg(MessagebusMsg origin, dynamic payload) : super("replay:" + origin.id, origin.name, payload) {}
+  MessagebusReplayMsg(MessagebusMsg origin, dynamic payload) : super("replay:${origin.id}", origin.name, payload) {}
 }
