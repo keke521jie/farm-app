@@ -19,7 +19,6 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
 
     var msgHandler = getIt<MsgHandler>();
     var clipMsgHandler = useMemoized(() => ClipMsgHandler());
-    var clipViewController = useMemoized(() => ClipViewController());
 
     var homeBloc = useMemoized(() {
       return getIt<HomePageBloc>(param1: context);
@@ -38,9 +37,9 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
           resizeToAvoidBottomInset: false,
           body: Stack(children: [
             ClipView(
-              uri: Uri.parse("https://farm.hswl007.com/clip/"),
+              key: const ValueKey("ClipView"),
+              uri: Uri.parse("https://farm.hswl007.com/clip/#/pages/login/LoginPage"),
               msgHandlers: [msgHandler, clipMsgHandler],
-              controller: clipViewController,
               navigatorKey: navigatorKey,
             ),
             ElevatedButton(onPressed: (){}, child: Text("拍照"))
