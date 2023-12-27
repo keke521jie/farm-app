@@ -1,5 +1,6 @@
 import "package:dartx/dartx.dart";
 import "package:flutter/cupertino.dart";
+import "package:flutter/services.dart";
 
 class ClipMsgHandler {
   void handle(BuildContext? context, Map<String, dynamic> msg, void Function(Map<String, dynamic> data) reply) {
@@ -32,6 +33,11 @@ class ClipMsgHandler {
 
         debugPrint("getScreenInfo, result: ${payload.toString()}");
         reply(payload);
+        break;
+
+      case "exit":
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        reply({});
         break;
     }
   }
