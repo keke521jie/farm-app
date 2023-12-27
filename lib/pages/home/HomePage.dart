@@ -42,7 +42,8 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
               msgHandlers: [msgHandler, clipMsgHandler],
               controller: clipViewController,
               navigatorKey: navigatorKey,
-            )
+            ),
+            ElevatedButton(onPressed: (){}, child: Text("拍照"))
           ]),
         );
       }),
