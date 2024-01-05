@@ -6,7 +6,7 @@ import "UploadImg.dart";
 
 class UploadFile {
   File? _image;
-  Future<String> imgUpload() async {
+  Future<String> cameraUpload() async {
     // 拍照上传
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -26,15 +26,24 @@ class UploadFile {
     return "";
   }
 
-  Future<void> cameraUpload() async {
+  Future<String> imgUpload() async {
     // 选择上传
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      _image = File(pickedFile.path);
+      logger.i(_image);
     } else {
       print("No image selected.");
     }
+
+    if (_image != null) {
+      // 上传图片
+      var imgUrl = await uploadImage(_image!, "problem");
+      return imgUrl;
+    }
+    return "";
   }
 }
 
