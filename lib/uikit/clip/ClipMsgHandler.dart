@@ -1,9 +1,12 @@
+import "package:app/base/kernel/Logger.dart";
 import "package:dartx/dartx.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/services.dart";
 
+import "../../base/util/UploadFile.dart";
+
 class ClipMsgHandler {
-  void handle(BuildContext? context, Map<String, dynamic> msg, void Function(Map<String, dynamic> data) reply) {
+  void handle(BuildContext? context, Map<String, dynamic> msg, void Function(Map<String, dynamic> data) reply) async {
     var name = msg.getOrElse("name", () => "");
     switch (name) {
       case "getScreenInfo":
@@ -35,9 +38,19 @@ class ClipMsgHandler {
         reply(payload);
         break;
 
+      case "isFlutter":
+        reply({"isFlutter": true});
+        break;
+
       case "exit":
-        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        SystemChannels.platform.invokeMethod("SystemNavigator.pop");
         reply({});
+        break;
+
+      case "filePicker":
+        var filesStr = await uploadFile.imgUpload();
+        logger.i(filesStr);
+        reply({"files": filesStr});
         break;
     }
   }

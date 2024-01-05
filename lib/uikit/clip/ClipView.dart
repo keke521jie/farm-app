@@ -1,7 +1,6 @@
 import "dart:convert";
 
 import "package:dartx/dartx.dart";
-import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_hooks/flutter_hooks.dart";
 import "package:uuid/uuid.dart";
@@ -17,7 +16,7 @@ class ClipView extends HookWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   late WebViewController webViewController;
 
-  ClipView({super.key, required this.uri, required this.msgHandlers, required this.navigatorKey}) {}
+  ClipView({super.key, required this.uri, required this.msgHandlers, required this.navigatorKey});
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +140,7 @@ class MessagebusMsg {
   String name;
   dynamic payload;
 
-  MessagebusMsg(this.id, this.name, this.payload) {}
+  MessagebusMsg(this.id, this.name, this.payload);
 
   Map<String, dynamic> toMap() {
     return {
@@ -158,5 +157,5 @@ class MessagebusMsg {
 }
 
 class MessagebusReplayMsg extends MessagebusMsg {
-  MessagebusReplayMsg(MessagebusMsg origin, dynamic payload) : super("replay:${origin.id}", origin.name, payload) {}
+  MessagebusReplayMsg(MessagebusMsg origin, dynamic payload) : super("replay:${origin.id}", origin.name, payload);
 }

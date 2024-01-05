@@ -38,11 +38,10 @@ class HomePage extends HookWidget with WidgetsBindingObserver {
           body: Stack(children: [
             ClipView(
               key: const ValueKey("ClipView"),
-              uri: Uri.parse("https://farm.hswl007.com/clip/#/pages/login/LoginPage"),
+              uri: Uri.parse("http://192.168.3.44:10086/"),
               msgHandlers: [msgHandler, clipMsgHandler],
               navigatorKey: navigatorKey,
             ),
-            ElevatedButton(onPressed: (){}, child: Text("拍照"))
           ]),
         );
       }),
