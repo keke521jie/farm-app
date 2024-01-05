@@ -49,7 +49,7 @@ class ClipMsgHandler {
         reply({"files": filesStr});
         break;
 
-      case "avatarPicker":
+      case "filePicker":
         var filesStr = await uploadFile.imgUpload();
         logger.i(filesStr);
         reply({"files": filesStr});
