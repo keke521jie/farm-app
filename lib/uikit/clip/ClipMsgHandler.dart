@@ -38,10 +38,6 @@ class ClipMsgHandler {
         reply(payload);
         break;
 
-      case "isFlutter":
-        reply({"isFlutter": true});
-        break;
-
       case "exit":
         SystemChannels.platform.invokeMethod("SystemNavigator.pop");
         reply({});
