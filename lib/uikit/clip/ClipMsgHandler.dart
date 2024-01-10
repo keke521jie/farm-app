@@ -54,6 +54,10 @@ class ClipMsgHandler {
         logger.i(filesStr);
         reply({"files": filesStr});
         break;
+
+      case "quitApp":
+        SystemNavigator.pop();
+        break;
     }
   }
 }
