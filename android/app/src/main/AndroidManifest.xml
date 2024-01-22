@@ -11,7 +11,7 @@
   </queries>
   <!-- android:label="app"    修改app名称-->
   <application
-    android:label="智慧果园"
+    android:label="方在农科"
     android:name="${applicationName}"
     android:requestLegacyExternalStorage="true"
     android:usesCleartextTraffic="true"
